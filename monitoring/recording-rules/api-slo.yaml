@@ -1,0 +1,55 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+
+metadata:
+  name: api-slo
+  namespace: monitoring
+
+  labels:
+    release: monitoring
+
+spec:
+  groups:
+    - name: api.slo
+
+      rules:
+
+        - record: api:requests:rate5m
+          expr: |
+            sum by (service) (
+              rate(http_server_request_duration_seconds_count[5m])
+            )
+
+        - record: api:errors:rate5m
+          expr: |
+            sum by (service) (
+              rate(http_server_request_duration_seconds_count{
+                http_response_status_code=~"5.."
+              }[5m])
+            )
+
+        - record: api:availability:ratio5m
+          expr: |
+            1 -
+            (
+              api:errors:rate5m /
+              clamp_min(api:requests:rate5m, 0.001)
+            )
+
+        - record: api:availability:ratio1h
+          expr: |
+            1 -
+            (
+              sum by (service) (
+                rate(http_server_request_duration_seconds_count{
+                  http_response_status_code=~"5.."
+                }[1h])
+              )
+              /
+              clamp_min(
+                sum by (service) (
+                  rate(http_server_request_duration_seconds_count[1h])
+                ),
+                0.001
+              )
+            )
