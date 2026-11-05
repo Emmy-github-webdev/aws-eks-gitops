@@ -1,0 +1,31 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-production-images
+spec:
+  validationFailureAction: Enforce
+  background: false
+
+  rules:
+    - name: verify-my-api
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - production
+
+      verifyImages:
+        - imageReferences:
+            - "ACCOUNT_ID.dkr.ecr.eu-west-1.amazonaws.com/my-api*"
+
+          required: true
+          verifyDigest: true
+          mutateDigest: true
+
+          attestors:
+            - entries:
+                - keyless:
+                    subject: "https://github.com/YOUR_ORG/YOUR_REPO/.github/workflows/release.yml@refs/heads/main"
+                    issuer: "https://token.actions.githubusercontent.com"

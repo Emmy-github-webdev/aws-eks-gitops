@@ -1,0 +1,23 @@
+admissionController:
+  replicas: 3
+
+backgroundController:
+  replicas: 2
+
+cleanupController:
+  replicas: 2
+
+reportsController:
+  replicas: 2
+
+features:
+  policyReports:
+    enabled: true
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi

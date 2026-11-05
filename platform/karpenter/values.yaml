@@ -1,0 +1,19 @@
+settings:
+  clusterName: enterprise-production
+  clusterEndpoint: YOUR_EKS_API_ENDPOINT
+  interruptionQueue: enterprise-production
+
+serviceAccount:
+  create: true
+  name: karpenter
+
+controller:
+  replicas: 2
+
+  resources:
+    requests:
+      cpu: 1
+      memory: 1Gi
+    limits:
+      cpu: 1
+      memory: 1Gi

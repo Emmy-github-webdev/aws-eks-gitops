@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: karpenter
+  namespace: argocd
+spec:
+  project: platform
+
+  sources:
+    - repoURL: public.ecr.aws/karpenter
+      chart: karpenter
+      targetRevision: YOUR_PINNED_KARPENTER_VERSION
+      helm:
+        releaseName: karpenter
+        valueFiles:
+          - $values/platform/karpenter/values.yaml
+
+    - repoURL: https://github.com/YOUR_ORG/enterprise-gitops.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: false
+
+    syncOptions:
+      - ServerSideApply=true

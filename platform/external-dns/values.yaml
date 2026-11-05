@@ -1,0 +1,26 @@
+provider:
+  name: aws
+
+aws:
+  region: eu-west-1
+
+serviceAccount:
+  create: true
+  name: external-dns
+  annotations: {}
+
+sources:
+  - ingress
+  - service
+
+domainFilters:
+  - example.com
+
+registry: txt
+
+txtOwnerId: enterprise-production
+
+policy: upsert-only
+
+extraArgs:
+  - --aws-zone-type=public
