@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: applications
+  namespace: argocd
+spec:
+  description: Business application workloads
+
+  sourceRepos:
+    - https://github.com/YOUR_ORG/enterprise-gitops.git
+
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: "production"
+    - server: https://kubernetes.default.svc
+      namespace: "staging"
+    - server: https://kubernetes.default.svc
+      namespace: "development"
+
+  clusterResourceWhitelist: []
+
+  namespaceResourceWhitelist:
+    - group: ""
+      kind: ConfigMap
+    - group: ""
+      kind: Secret
+    - group: ""
+      kind: Service
+    - group: ""
+      kind: ServiceAccount
+    - group: apps
+      kind: Deployment
+    - group: apps
+      kind: StatefulSet
+    - group: apps
+      kind: DaemonSet
+    - group: networking.k8s.io
+      kind: Ingress
+    - group: autoscaling
+      kind: HorizontalPodAutoscaler
+    - group: policy
+      kind: PodDisruptionBudget
+
+  roles:
+    - name: developer
+      description: Application deployment access
+      groups:
+        - application-developers
+      policies:
+        - p, proj:applications:developer, applications, get, applications/*, allow
+        - p, proj:applications:developer, applications, sync, applications/*, allow
