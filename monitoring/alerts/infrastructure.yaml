@@ -1,0 +1,75 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+
+metadata:
+  name: infrastructure-alerts
+  namespace: monitoring
+
+  labels:
+    release: monitoring
+
+spec:
+  groups:
+    - name: kubernetes.infrastructure
+
+      rules:
+
+        - alert: KubernetesNodeNotReady
+          expr: |
+            kube_node_status_condition{
+              condition="Ready",
+              status="true"
+            } == 0
+
+          for: 5m
+
+          labels:
+            severity: critical
+
+          annotations:
+            summary: Kubernetes node is not ready
+
+        - alert: PodCrashLooping
+          expr: |
+            max_over_time(
+              kube_pod_container_status_waiting_reason{
+                reason="CrashLoopBackOff"
+              }[5m]
+            ) > 0
+
+          for: 5m
+
+          labels:
+            severity: warning
+
+          annotations:
+            summary: Pod is crash looping
+
+        - alert: PodNotReady
+          expr: |
+            kube_pod_status_ready{
+              condition="false"
+            } == 1
+
+          for: 10m
+
+          labels:
+            severity: warning
+
+          annotations:
+            summary: Pod is not ready
+
+        - alert: PersistentVolumeFillingUp
+          expr: |
+            (
+              kubelet_volume_stats_available_bytes /
+              kubelet_volume_stats_capacity_bytes
+            ) < 0.15
+
+          for: 10m
+
+          labels:
+            severity: critical
+
+          annotations:
+            summary: Persistent volume has less than 15 percent free space
