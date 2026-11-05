@@ -1,0 +1,85 @@
+fullnameOverride: monitoring
+
+prometheus:
+  enabled: true
+
+  prometheusSpec:
+    replicas: 2
+
+    retention: 15d
+
+    retentionSize: 40GB
+
+    walCompression: true
+
+    externalLabels:
+      environment: production
+      cluster: enterprise-production
+
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+
+      limits:
+        cpu: "2"
+        memory: 4Gi
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 50Gi
+
+grafana:
+  enabled: true
+
+  replicas: 2
+
+  persistence:
+    enabled: true
+    storageClassName: gp3
+    size: 10Gi
+
+  admin:
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+
+  service:
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+
+alertmanager:
+  enabled: true
+
+  alertmanagerSpec:
+    replicas: 2
+
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+
+prometheusOperator:
+  enabled: true

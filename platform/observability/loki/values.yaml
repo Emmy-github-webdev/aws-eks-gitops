@@ -1,0 +1,46 @@
+deploymentMode: Distributed
+
+loki:
+  auth_enabled: false
+
+  commonConfig:
+    replication_factor: 3
+
+  storage:
+    type: s3
+
+    bucketNames:
+      chunks: YOUR_LOKI_BUCKET
+      ruler: YOUR_LOKI_BUCKET
+      admin: YOUR_LOKI_BUCKET
+
+    s3:
+      region: YOUR_AWS_REGION
+
+  schemaConfig:
+    configs:
+      - from: "2025-01-01"
+        store: tsdb
+        object_store: s3
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+
+  limits_config:
+    retention_period: 720h
+
+  compactor:
+    retention_enabled: true
+
+  ruler:
+    enable_api: true
+
+gateway:
+  enabled: true
+
+chunksCache:
+  enabled: true
+
+resultsCache:
+  enabled: true
