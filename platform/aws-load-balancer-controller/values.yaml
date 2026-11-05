@@ -1,0 +1,23 @@
+clusterName: enterprise-production
+region: us-east-1
+vpcId: YOUR_VPC_ID
+
+replicaCount: 2
+
+serviceAccount:
+  create: true
+  name: aws-load-balancer-controller
+  annotations: {}
+
+enableServiceMutatorWebhook: false
+
+podDisruptionBudget:
+  maxUnavailable: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

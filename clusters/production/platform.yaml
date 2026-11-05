@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-load-balancer-controller
+  namespace: argocd
+spec:
+  project: platform
+
+  source:
+    repoURL: https://github.com/YOUR_ORG/enterprise-gitops.git
+    targetRevision: main
+    path: platform/aws-load-balancer-controller
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+
+    syncOptions:
+      - CreateNamespace=false
+      - PruneLast=true

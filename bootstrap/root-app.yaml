@@ -6,7 +6,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: platform
+  project: bootstrap
 
   source:
     repoURL: https://github.com/YOUR_ORG/enterprise-gitops.git
