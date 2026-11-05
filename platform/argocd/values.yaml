@@ -1,0 +1,32 @@
+global:
+  domain: argocd.example.com
+
+configs:
+  cm:
+    url: https://argocd.example.com
+    admin.enabled: "false"
+
+  rbac:
+    policy.default: role:authenticated
+    scopes: "[groups, email]"
+
+server:
+  replicas: 2
+
+controller:
+  replicas: 1
+
+repoServer:
+  replicas: 2
+
+applicationSet:
+  replicas: 2
+
+redis-ha:
+  enabled: true
+
+redis:
+  enabled: false
+
+dex:
+  enabled: false
